@@ -32,54 +32,88 @@ All projects will require the following:
 ### Custom Force Formula
 What is the formula for your force? Including descriptions/definitions for the symbols. (You may include a picture of the formula if it is not easily typed.)
 
-YOUR ANSWER HERE
+ELECTROSTATIC FORCE BETWEEN TWO POINT CHARGES
+
+F = kq1q2/r^2
 
 ### Custom Force Breakdown
 - What information that is already present in the `Orb` or `OrbNode` classes does this force use?
-  - YOUR ANSWER HERE
+  - center pvectors
 
 - Does this force require any new constants, if so what are they and what values will you try initially?
-  - YOUR ANSWER HERE
+  - k, electrostatic constant
 
 - Does this force require any new information to be added to the `Orb` class? If so, what is it and what data type will you use?
-  - YOUR ANSWER HERE
+  - charge, type int
 
 - Does this force interact with other `Orbs`, or is it applied based on the environment?
-  - YOUR ANSWER HERE
+  - with other orbs
 
 - In order to calculate this force, do you need to perform extra intermediary calculations? If so, what?
-  - YOUR ANSWER HERE
+  - no
 
---- 
+---
+
+### Custom Force Formula
+What is the formula for your force? Including descriptions/definitions for the symbols. (You may include a picture of the formula if it is not easily typed.)
+
+MAGNETIC FORCE BETWEEN TWO MAGNETIC MONOPOLES
+
+F = Mqm1qm2/4pir^2
+
+### Custom Force Breakdown
+- What information that is already present in the `Orb` or `OrbNode` classes does this force use?
+  - center pvectors
+
+- Does this force require any new constants, if so what are they and what values will you try initially?
+  - M, permeability
+  - qm1. qm2: magnetic charge
+
+- Does this force require any new information to be added to the `Orb` class? If so, what is it and what data type will you use?
+  - charge, type int
+
+- Does this force interact with other `Orbs`, or is it applied based on the environment?
+  - with other orbs
+
+- In order to calculate this force, do you need to perform extra intermediary calculations? If so, what?
+  - no
+
+---
 
 ### Simulation 1: Gravity
 Describe how you will attempt to simulate orbital motion.
+
+using the formula Gm1m2/r^2 to represent gravity and with a sufficient tangential speed to a fixed mass, a given mass can enter into orbit.
 
 --- 
 
 ### Simulation 2: Spring
 Describe what your spring simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+A simple fixed orb at the top of the screen (0 mass) with an orb hanging from it through a "spring". The position of the lower orb can be adjusted before the simulation starts to
+change the initial force applied. You will get simple harmonic motion that decays over time due to the constant force of gravity.
 
 --- 
 
 ### Simulation 3: Drag
 Describe what your drag simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+The top half of the screen will be "air", with little to no drag as calculated by air resistance. The bottom half is "water" with higher drag.
 
 --- 
 
 ### Simulation 4: Custom force
 Describe what your Custom force simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+Three point charges around the center of the screen arranged in a triangle. 
 
 --- 
 
 ### Simulation 5: Combination
 Describe what your combination simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+Randomly arranged balls across the screen with the two halves of the screen separated for the drag force. In addtion, collisions!
+
+<img width="710" height="113" alt="image" src="https://github.com/user-attachments/assets/3ebf4db4-a0b6-4e06-a232-fb9e3dc67546" />
+
 
