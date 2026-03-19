@@ -3,7 +3,7 @@
 ### NeXTCS
 ### Period: 
 ## Thinker0: Justin Luo
-## Thinker1: nathaniel
+## Thinker1: Nathaniel Moy
 ## Thinker2: jed sloam
 ---
 
