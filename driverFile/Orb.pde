@@ -7,6 +7,7 @@ class Orb
   PVector acceleration;
   float bsize;
   float mass;
+  float charge;
   color c;
 
 
@@ -19,6 +20,7 @@ class Orb
     bsize = random(10, MAX_SIZE);
     float x = random(bsize/2, width-bsize/2);
     float y = random(bsize/2, height-bsize/2);
+    charge = 0.2;
     center = new PVector(x, y);
     mass = random(10, 100);
     velocity = new PVector();
@@ -31,7 +33,7 @@ class Orb
    This constructor constructs an object of class Orb at a given position with a given size and mass.
    This is used if you want to be deliberate in the parameters of the object.
    */
-  Orb(float x, float y, float s, float m)
+  Orb(float x, float y, float s, float m, float q)
   {
     bsize = s;
     mass = m;
@@ -97,6 +99,13 @@ class Orb
     force.sub(center);
     force.mult(strength);
     return force;
+  }
+
+  PVector getElectroStat(Orb other, float k)
+  {
+    PVector force;
+
+    float strength = k
   }
 
   /**

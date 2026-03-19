@@ -5,7 +5,7 @@ int MIN_SIZE = 10;
 int MAX_SIZE = 60;
 float MIN_MASS = 10;
 float MAX_MASS = 100;
-float G_CONSTANT = 1;
+float G_CONSTANT = 0.1;
 float D_COEF = 0.1;
 
 int SPRING_LENGTH = 50;
@@ -25,12 +25,62 @@ int orbCount;
 void setup()
 {
   size(500, 500);
+  makeOrbs(false);
+  earth = new FixedOrb(width / 2, height * 1000, 5, 100000);
 }
 
 void draw()
 {
   background(255);
   displayMode();
+
+  //draw the orbs and springs
+  for (int o=0; o < orbCount; o++) {
+    orbs[o].display();
+  }
+
+  for (int o=0; o < orbCount - 1; o++) {
+    drawSpring(orbs[o], orbs[o+1]);
+  }
+
+  if (toggles[MOVING]) {
+    applySprings();
+
+    for (int o=0; o < orbCount; o++) {
+      if (toggles[GRAVITY])
+      {
+        orbs[o].applyForce(orbs[o].getGravity(earth, G_CONSTANT));
+        for (int i = 0; i < orbCount; i++)
+        {
+          orbs[o].applyForce(orbs[o].getGravity(orbs[i], G_CONSTANT));
+        }
+      }
+      if (toggles[DRAGF])
+      {
+        orbs[o].applyForce(orbs[o].getDragForce(D_COEF));
+      }
+    }//gravity, drag
+
+    for (int o=0; o < orbCount; o++) {
+      orbs[o].move(toggles[BOUNCE]);
+    }
+  }//moving
+}//draw
+
+void applySprings()
+{
+  if (orbCount < 2) return;
+
+  for (int i = 0; i < orbCount; i++) {
+    if (i == 0) {
+      orbs[i].applyForce(orbs[i].getSpring(orbs[i + 1], SPRING_LENGTH, SPRING_K));
+    } else if (i == orbCount - 1) {
+      orbs[i].applyForce(orbs[i].getSpring(orbs[i - 1], SPRING_LENGTH, SPRING_K));
+    } else {
+      orbs[i].applyForce(orbs[i].getSpring(orbs[i + 1], SPRING_LENGTH, SPRING_K));
+      orbs[i].applyForce(orbs[i].getSpring(orbs[i - 1], SPRING_LENGTH, SPRING_K));
+    }
+  }
 }
 
 void displayMode()
@@ -89,8 +139,7 @@ void addOrb()
   {
     orbs[orbCount] = new Orb();
     orbCount++;
-  }
-  else
+  } else
   {
     Orb[] tempOrbs = new Orb[orbs.length + 1];
     myArrayCopy(orbs, tempOrbs);
@@ -107,6 +156,21 @@ void myArrayCopy(Orb[] source, Orb[] target)
     target[i] = source[i];
   }
 }
+
+void drawSpring(Orb o0, Orb o1)
+{
+  if (o0.center.dist(o1.center) < SPRING_LENGTH)
+  {
+    stroke(0, 255, 0);
+  } else if (o0.center.dist(o1.center) > SPRING_LENGTH)
+  {
+    stroke(255, 0, 0);
+  } else
+  {
+    stroke(0);
+  }
+  line(o0.center.x, o0.center.y, o1.center.x, o1.center.y);
+}//drawSpring
 
 void keyPressed()
 {
