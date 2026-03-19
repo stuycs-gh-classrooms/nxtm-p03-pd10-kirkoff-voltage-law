@@ -57,17 +57,19 @@ F = kq1q2/r^2
 ### Custom Force Formula
 What is the formula for your force? Including descriptions/definitions for the symbols. (You may include a picture of the formula if it is not easily typed.)
 
-MAGNETIC FORCE BETWEEN TWO MAGNETIC MONOPOLES
+MAGNETIC FORCE OF A POINT IN A MAGNETIC FIELD
 
-F = Mqm1qm2/4pir^2
+F = qv X B
+X = cross product
 
 ### Custom Force Breakdown
 - What information that is already present in the `Orb` or `OrbNode` classes does this force use?
   - center pvectors
+  - velocity
+  - charge
 
 - Does this force require any new constants, if so what are they and what values will you try initially?
-  - M, permeability
-  - qm1. qm2: magnetic charge
+  - magnetic field strength
 
 - Does this force require any new information to be added to the `Orb` class? If so, what is it and what data type will you use?
   - charge, type int
@@ -76,7 +78,7 @@ F = Mqm1qm2/4pir^2
   - with other orbs
 
 - In order to calculate this force, do you need to perform extra intermediary calculations? If so, what?
-  - no
+  - cross product
 
 ---
 
