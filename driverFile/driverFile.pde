@@ -6,17 +6,31 @@ int MAX_SIZE = 60;
 float MIN_MASS = 10;
 float MAX_MASS = 100;
 float G_CONSTANT = 0.1;
+float K_CONSTANT = 9 * pow(10, 9);
 float D_COEF = 0.1;
 
 int SPRING_LENGTH = 50;
 float  SPRING_K = 0.005;
 
+float ELECTRIC_FIELD_MAGNITUDE = 100000; // Units are N/C or V/m
+float ELECTRIC_FIELD_ANGLE = -PI/4; // very importantly in RADIANS, not degrees.
+                                    //  Also, processing coordinate system is flipped cross the x-axis, keep this in mind when orbs dont move in the intended direction.
+PVector ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
+
+
+float MAGNETIC_FIELD = 2000; // SI units are teslas
+
+
 int MOVING = 0;
 int BOUNCE = 1;
 int GRAVITY = 2;
 int DRAGF = 3;
-boolean[] toggles = new boolean[4];
-String[] modes = {"Moving", "Bounce", "Gravity", "Drag"};
+int ELECTROSTAT = 4;
+int SPRING = 5;
+int EFIELD = 6; 
+int BFIELD = 7;
+boolean[] toggles = new boolean[8];
+String[] modes = {"Moving", "Bounce", "Gravity", "Drag", "ElectroStat", "Spring", "EField", "BField"};
 
 FixedOrb earth;
 Orb[] orbs;
@@ -24,7 +38,7 @@ int orbCount;
 
 void setup()
 {
-  size(500, 500);
+  size(1000, 1000);
   makeOrbs(false);
   earth = new FixedOrb(width / 2, height * 1000, 5, 100000);
 }
@@ -40,11 +54,17 @@ void draw()
   }
 
   for (int o=0; o < orbCount - 1; o++) {
-    drawSpring(orbs[o], orbs[o+1]);
+    if (toggles[SPRING])
+    {
+      drawSpring(orbs[o], orbs[o+1]);
+    }
   }
 
   if (toggles[MOVING]) {
-    applySprings();
+    if (toggles[SPRING])
+    {
+      applySprings();
+    }
 
     for (int o=0; o < orbCount; o++) {
       if (toggles[GRAVITY])
@@ -52,14 +72,39 @@ void draw()
         orbs[o].applyForce(orbs[o].getGravity(earth, G_CONSTANT));
         for (int i = 0; i < orbCount; i++)
         {
+          if (i == o)
+          {
+            continue;
+          }
           orbs[o].applyForce(orbs[o].getGravity(orbs[i], G_CONSTANT));
         }
       }
+
       if (toggles[DRAGF])
       {
         orbs[o].applyForce(orbs[o].getDragForce(D_COEF));
       }
-    }//gravity, drag
+
+      if (toggles[ELECTROSTAT])
+      {
+        for (int i = 0; i < orbCount; i++)
+        {
+          if (i == o)
+          {
+            continue;
+          }
+          orbs[o].applyForce(orbs[o].getElectroStat(orbs[i], K_CONSTANT));
+        }
+      }
+    if (toggles[EFIELD])
+    {
+        orbs[o].applyForce(orbs[o].getElectricFieldForce(ELECTRIC_FIELD));
+    }
+    if (toggles[BFIELD])
+    {
+        orbs[o].applyForce(orbs[o].getMagneticFieldForce(MAGNETIC_FIELD));
+    }
+    }//gravity, drag, estat, etc
 
     for (int o=0; o < orbCount; o++) {
       orbs[o].move(toggles[BOUNCE]);
@@ -185,6 +230,18 @@ void keyPressed()
   }
   if (key == 'd') {
     toggles[DRAGF]   = !toggles[DRAGF];
+  }
+  if (key == 'e') {
+    toggles[ELECTROSTAT]   = !toggles[ELECTROSTAT];
+  }
+  if (key == 's') {
+    toggles[SPRING]   = !toggles[SPRING];
+  }
+  if (key == 'f') {
+    toggles[EFIELD]   = !toggles[EFIELD];
+  }
+  if (key == 'm') {
+    toggles[BFIELD]   = !toggles[BFIELD];
   }
   if (key == '1') {
     makeOrbs(true);
