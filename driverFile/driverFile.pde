@@ -1,4 +1,4 @@
-
+boolean ordered = false;
 
 int NUM_ORBS = 10;
 int MIN_SIZE = 10;
@@ -12,8 +12,8 @@ float D_COEF = 0.1;
 int SPRING_LENGTH = 50;
 float  SPRING_K = 0.005;
 
-float ELECTRIC_FIELD_MAGNITUDE = 100000; // Units are N/C or V/m
-float ELECTRIC_FIELD_ANGLE = -PI/4; // very importantly in RADIANS, not degrees.
+float ELECTRIC_FIELD_MAGNITUDE = 10000; // Units are N/C or V/m
+float ELECTRIC_FIELD_ANGLE = -PI/2; // very importantly in RADIANS, not degrees.
                                     //  Also, processing coordinate system is flipped cross the x-axis, keep this in mind when orbs dont move in the intended direction.
 PVector ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
 
@@ -39,7 +39,7 @@ int orbCount;
 void setup()
 {
   size(1000, 1000);
-  makeOrbs(false);
+  makeOrbs(ordered);
   earth = new FixedOrb(width / 2, height * 1000, 5, 100000);
 }
 
@@ -47,6 +47,8 @@ void draw()
 {
   background(255);
   displayMode();
+  
+  println(ELECTRIC_FIELD_ANGLE);
 
   //draw the orbs and springs
   for (int o=0; o < orbCount; o++) {
@@ -217,6 +219,15 @@ void drawSpring(Orb o0, Orb o1)
   line(o0.center.x, o0.center.y, o1.center.x, o1.center.y);
 }//drawSpring
 
+void reset()
+{
+  makeOrbs(ordered);
+  for (int i = 0; i < toggles.length; i++)
+  {
+    toggles[i] = false;
+  }
+}
+
 void keyPressed()
 {
   if (key == ' ') {
@@ -248,6 +259,18 @@ void keyPressed()
   }
   if (key == '2') {
     makeOrbs(false);
+  }
+  if (key == ']')
+  {
+    ELECTRIC_FIELD_ANGLE -= 0.01;
+  }
+  if (key == '[')
+  {
+    ELECTRIC_FIELD_ANGLE += 0.01;
+  }
+  if (key == 'r')
+  {
+    reset();
   }
 
   if (key == '-' && orbCount > 0) {
