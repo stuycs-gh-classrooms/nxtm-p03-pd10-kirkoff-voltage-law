@@ -10,6 +10,8 @@ class Orb
   float charge;
   color c;
 
+  float currentFluidDensity;
+
 
   /**
    This constructor constructs an object of class Orb at a random position with a random size and mass.
@@ -38,6 +40,7 @@ class Orb
   {
     bsize = s;
     mass = m;
+    charge = q;
     center = new PVector(x, y);
     velocity = new PVector();
     acceleration = new PVector();
@@ -50,7 +53,6 @@ class Orb
    */
   void move(boolean bounce)
   {
-    collide();
 
     if (bounce) {
       xBounce();
@@ -59,6 +61,9 @@ class Orb
 
     velocity.add(acceleration);
     center.add(velocity);
+    
+    collide();
+    
     acceleration.mult(0);
 
     if (bounce)
@@ -83,13 +88,24 @@ class Orb
   /**
    This method calculates a theoretical drag force being applied on an object at a given time with a given drag coefficient and velocity.
    */
-  PVector getDragForce(float cd)
+  PVector getDragForce(float fluidDensity, float cd)
   {
-    float dragMag = velocity.mag();
-    dragMag = -0.5 * dragMag * dragMag * cd;
+    float area = PI * (bsize/2) * (bsize/2); // This is the cross-sectional area
+
+    float dragMag = -0.5 * velocity.mag() * velocity.mag() * cd * fluidDensity * area;
+
     PVector dragForce = velocity.copy();
-    dragForce.normalize();
+    if (dragForce.mag() != 0)
+    {
+      dragForce.normalize();
+    }
     dragForce.mult(dragMag);
+    
+    if (dragForce.mag() > velocity.mag() * mass)
+    {
+      PVector v = velocity.copy();
+      dragForce = v.mult(-mass);
+    }
     return dragForce;
   }
 
@@ -177,7 +193,7 @@ class Orb
         direction.mult(overlap/2);
 
         center.add(direction);
-        
+
         nearestOrb.center.sub(direction);
       }
     }
@@ -190,7 +206,7 @@ class Orb
 
     float velocityX;
     float velocityY;
-    
+
     float otherVelX;
     float otherVelY;
 
@@ -198,11 +214,11 @@ class Orb
     {
       velocityX = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - nearestOrb.mass)) + (2 * nearestOrb.mass * nearestOrb.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + nearestOrb.mass)) * cos(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * cos(contactAngle + PI/2);
       velocityY = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - nearestOrb.mass)) + (2 * nearestOrb.mass * nearestOrb.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + nearestOrb.mass)) * sin(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * sin(contactAngle + PI/2);
-      
+
       otherVelX = (((nearestOrb.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (nearestOrb.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + nearestOrb.mass)) * cos(contactAngle + PI) + nearestOrb.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * cos(contactAngle + (3 * PI/2));
       otherVelY = (((nearestOrb.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (nearestOrb.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + nearestOrb.mass)) * sin(contactAngle + PI) + nearestOrb.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * sin(contactAngle + (3 * PI/2));
-      
-      
+
+
       nearestOrb.velocity = new PVector(otherVelX, otherVelY);
       velocity = new PVector(velocityX, velocityY);
     }
