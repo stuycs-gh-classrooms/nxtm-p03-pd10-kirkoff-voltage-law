@@ -20,9 +20,10 @@ class Orb
     bsize = random(10, MAX_SIZE);
     float x = random(bsize/2, width-bsize/2);
     float y = random(bsize/2, height-bsize/2);
-    charge = random(-0.001, 0.001);
+    charge = random(-0.01, 0.01);
     center = new PVector(x, y);
     mass = random(10, 100);
+    // mass = 5 * bsize;
     velocity = new PVector();
     acceleration = new PVector();
     setColor();
@@ -49,6 +50,8 @@ class Orb
    */
   void move(boolean bounce)
   {
+    collide();
+
     if (bounce) {
       xBounce();
       yBounce();
@@ -57,7 +60,7 @@ class Orb
     velocity.add(acceleration);
     center.add(velocity);
     acceleration.mult(0);
-    
+
     if (bounce)
     {
       center.x = constrain(center.x, bsize/2 - 5, width - bsize/2 + 5);
@@ -98,10 +101,10 @@ class Orb
   PVector getGravity(Orb other, float G)
   {
     float strength = G * mass*other.mass;
-    
+
     //dont want to divide by 0!
     float r = max(center.dist(other.center), MIN_SIZE);
-    
+
     strength = strength/ pow(r, 2);
     PVector force = other.center.copy();
     force.sub(center);
@@ -111,38 +114,98 @@ class Orb
 
   PVector getElectroStat(Orb other, float k)
   {
-    
+
     //This subtraction appears reversed such that you can get the correct directions for the vectors.
     // You can check it yourself: In this scenario, the force vector starts out pointing away from the other orb.
     // This means that with two positive or two negative charges, the sign remains unchanged and you get repulsion (this lines up with reality)
     // With a + and a -, the sign is flipped and you get attraction.
     PVector force = center.copy();
-    
+
     force.sub(other.center);
-    
+
     float r = max(center.dist(other.center), MIN_SIZE);
-    
+
     force.normalize();
 
     float strength = (k * charge * other.charge)/pow(r, 2);
-    
+
     force.mult(strength);
-    
+
     return force;
   }
-  
+
   PVector getElectricFieldForce(PVector field)
   {
     PVector force = (field.copy()).mult(charge);
-    
+
     return force;
   }
-  
+
   PVector getMagneticFieldForce(float b)
   {
     PVector force = new PVector(-charge * velocity.y * b, charge * velocity.x * b);
-    
+
     return force;
+  }
+
+  void collide()
+  {
+    // NOTE: Assumes elastic collisions. Inelastic collision calculations are WEIRD.
+
+    // The following section finds the nearest Orb. Self-explanatory code.
+    Orb nearestOrb = new Orb(Float.MAX_VALUE, Float.MAX_VALUE, 0, 0, 0);
+
+    for (int i = 0; i < orbs.length; i++)
+    {
+      if (orbs[i] != null && center.dist(orbs[i].center) < center.dist(nearestOrb.center) && orbs[i] != this)
+      {
+        nearestOrb = orbs[i];
+      }
+    }
+
+    // The following section will be a check for overlap and then a subsequent correction of that overlap.
+
+    if (collisionCheck(nearestOrb))
+    {
+      float overlap = bsize/2 + nearestOrb.bsize/2 - center.dist(nearestOrb.center);
+
+      if (overlap > 0)
+      {
+        PVector direction = new PVector(-(nearestOrb.center.x - center.x), -(nearestOrb.center.y - center.y));
+        direction.normalize();
+
+        direction.mult(overlap/2);
+
+        center.add(direction);
+        
+        nearestOrb.center.sub(direction);
+      }
+    }
+
+    // The following section will be a check for collision and then subsequently an application of the collision formula.
+
+    float velAngle = atan2(velocity.y, velocity.x); // for some dumbass reason the y-cors and x-cors in atan2 are flipped.
+    float velAngleOther = atan2(nearestOrb.velocity.y, nearestOrb.velocity.x);
+    float contactAngle = atan2(nearestOrb.center.y - center.y, nearestOrb.center.x - center.x);
+
+    float velocityX;
+    float velocityY;
+    
+    float otherVelX;
+    float otherVelY;
+
+    if (collisionCheck(nearestOrb))
+    {
+      velocityX = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - nearestOrb.mass)) + (2 * nearestOrb.mass * nearestOrb.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + nearestOrb.mass)) * cos(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * cos(contactAngle + PI/2);
+      velocityY = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - nearestOrb.mass)) + (2 * nearestOrb.mass * nearestOrb.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + nearestOrb.mass)) * sin(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * sin(contactAngle + PI/2);
+      
+      otherVelX = (((nearestOrb.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (nearestOrb.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + nearestOrb.mass)) * cos(contactAngle + PI) + nearestOrb.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * cos(contactAngle + (3 * PI/2));
+      otherVelY = (((nearestOrb.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (nearestOrb.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + nearestOrb.mass)) * sin(contactAngle + PI) + nearestOrb.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * sin(contactAngle + (3 * PI/2));
+      
+      
+      nearestOrb.velocity = new PVector(otherVelX, otherVelY);
+      velocity = new PVector(velocityX, velocityY);
+    }
   }
 
   /**
@@ -249,16 +312,15 @@ class Orb
     circle(center.x, center.y, bsize);
     fill(0);
     //text(mass, center.x, center.y);
-    
-    
+
+
     textAlign(CENTER, CENTER);
     textSize(bsize);
     fill(255);
     if (charge > 0)
     {
-    text("+", center.x, center.y);
-    }
-    else if (charge < 0)
+      text("+", center.x, center.y);
+    } else if (charge < 0)
     {
       text("-", center.x, center.y - 3);
     }
