@@ -1,7 +1,7 @@
 class Orb
 {
 
-  //instance variables
+  // instance variables
   PVector center;
   PVector velocity;
   PVector acceleration;
@@ -93,8 +93,7 @@ class Orb
         if (trace.get(i+1) != null)
         {
           trace.set(i, trace.get(i+1));
-        }
-        else
+        } else
         {
           trace.set(i+1, null);
         }
