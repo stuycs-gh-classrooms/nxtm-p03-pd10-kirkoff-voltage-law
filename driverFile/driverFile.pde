@@ -7,7 +7,7 @@ int MAX_SIZE = 60;
 float MIN_MASS = 10;
 float MAX_MASS = 100;
 float G_CONSTANT = 0.1;
-float K_CONSTANT = 2 * pow(10, 2);
+float K_CONSTANT = 2 * pow(10, 4);
 
 float D_COEF = 0.1; // uniform drag coefficient, this is NOT the value used in the drag simulation.
 
@@ -31,7 +31,7 @@ float ELECTRIC_FIELD_ANGLE = -PI/2; // very importantly in RADIANS, not degrees.
 PVector ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
 
 
-float MAGNETIC_FIELD = 2000; // SI units are teslas (N/Am)
+float MAGNETIC_FIELD = 1500; // SI units are teslas (N/Am)
 
 
 int MOVING = 0;

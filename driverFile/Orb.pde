@@ -10,6 +10,8 @@ class Orb
   float charge;
   color c;
 
+  ArrayList<PVector> trace = new ArrayList(50);
+
   float currentFluidDensity;
 
 
@@ -53,7 +55,7 @@ class Orb
    */
   void move(boolean bounce)
   {
-
+    drawTrace(50);
     if (bounce) {
       xBounce();
       yBounce();
@@ -61,9 +63,9 @@ class Orb
 
     velocity.add(acceleration);
     center.add(velocity);
-    
+
     collide();
-    
+
     acceleration.mult(0);
 
     if (bounce)
@@ -72,6 +74,33 @@ class Orb
       center.y = constrain(center.y, bsize/2 - 5, height - bsize/2 + 5);
     }
   }//move
+
+  void drawTrace(int traceLength)
+  {
+    PVector newCircle = new PVector(center.x, center.y);
+    trace.add(newCircle);
+    fill(0);
+
+
+    for (int i = 0; i < trace.size(); i++)
+    {
+      circle(trace.get(i).x, trace.get(i).y, 3);
+    }
+    if (trace.size() > traceLength)
+    {
+      for (int i = 0; i < trace.size() - 1; i++)
+      {
+        if (trace.get(i+1) != null)
+        {
+          trace.set(i, trace.get(i+1));
+        }
+        else
+        {
+          trace.set(i+1, null);
+        }
+      }
+    }
+  }
 
 
   /**
@@ -100,7 +129,7 @@ class Orb
       dragForce.normalize();
     }
     dragForce.mult(dragMag);
-    
+
     if (dragForce.mag() > velocity.mag() * mass)
     {
       PVector v = velocity.copy();
