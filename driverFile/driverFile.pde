@@ -1,5 +1,6 @@
 boolean ordered = false;
 boolean layeredDrag = false;
+boolean bFieldSimOn = false;
 
 int NUM_ORBS = 10;
 int MIN_SIZE = 10;
@@ -15,7 +16,7 @@ float D_COEF = 0.1; // uniform drag coefficient, this is NOT the value used in t
 float dragAir = 0.3;
 float dragWater = 0.4;
 float dragHoney = 0.6; // Technically, drag isn't supposed to be applied to honey because of its viscosity, but oh well I'm not researching another equation for this.
-                       // Instead, I just used a higher drag for honey to simulate viscosity instead.
+// Instead, I just used a higher drag for honey to simulate viscosity instead.
 
 // FLUID DENSITY VALUES
 float airDensity = 0.001;
@@ -25,7 +26,7 @@ float honeyDensity = 0.01;
 int SPRING_LENGTH = 120;
 float  SPRING_K = 0.01;
 
-float ELECTRIC_FIELD_MAGNITUDE = 10000; // Units are N/C or V/m
+float ELECTRIC_FIELD_MAGNITUDE = 1000; // Units are N/C or V/m
 float ELECTRIC_FIELD_ANGLE = -PI/2; // very importantly in RADIANS, not degrees.
 //  Also, processing coordinate system is flipped cross the x-axis, keep this in mind when orbs dont move in the intended direction.
 PVector ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
@@ -51,6 +52,7 @@ int orbCount;
 
 void setup()
 {
+  frameRate(120);
   size(1000, 1000);
   standardInit();
 }
@@ -170,38 +172,87 @@ void dragSimInit()
 
 void springSimInit()
 {
-  ordered = true;
+  ordered = false;
   layeredDrag = false;
-  
+
   for (int i = 0; i < toggles.length; i++)
   {
     toggles[i] = false;
   }
   toggles[SPRING] = true;
   toggles[GRAVITY] = true;
-  
+
   NUM_ORBS = 2;
   makeOrbs(ordered);
   earth = new FixedOrb(width / 2, height * 1000, 5, 200000);
-  
+
   orbs = new Orb[NUM_ORBS];
-  
+
   orbs[0] = new FixedOrb(width/2, height / 2, 0.00001, 0);
   orbs[1] = new Orb();
-  
-  while(orbs[1].center.x > width/4 && orbs[1].center.x < 3 * width/4)
+
+  while (orbs[1].center.x > width/4 && orbs[1].center.x < 3 * width/4)
   {
     orbs[1].center.x = random(0, width);
   }
-  
+
   orbs[1].mass = 50;
   orbs[1].bsize = 25;
+}
+
+void eFieldSimInit()
+{
+  ordered = true;
+  layeredDrag = false;
+
+  for (int i = 0; i < toggles.length; i++)
+  {
+    toggles[i] = false;
+  }
+  toggles[EFIELD] = true;
+  toggles[BOUNCE] = true;
+
+  NUM_ORBS = 20;
+  makeOrbs(ordered);
+  earth = null;
+
+  orbs[0].charge = (int)(random(3)) - 1;
+  orbs[1].charge = (int)(random(3)) - 1;
+  orbs[2].charge = (int)(random(3)) - 1;
+  orbs[3].charge = (int)(random(3)) - 1;
+  orbs[4].charge = (int)(random(3)) - 1;
+
+  orbs[0].bsize = 25;
+  orbs[1].bsize = 25;
+  orbs[2].bsize = 25;
+  orbs[3].bsize = 25;
+  orbs[4].bsize = 25;
+}
+
+void bFieldSimInit()
+{
+  ordered = false;
+  layeredDrag = false;
+
+  for (int i = 0; i < toggles.length; i++)
+  {
+    toggles[i] = false;
+  }
+  toggles[BFIELD] = true;
+  toggles[BOUNCE] = true;
+
+  earth = null;
+  NUM_ORBS = 1;
+  makeOrbs(ordered);
+
+  bFieldSimOn = true;
 }
 
 void draw()
 {
   background(255);
   displayMode();
+
 
   // for the drag simulation, off otherwise
   if (layeredDrag)
@@ -210,6 +261,19 @@ void draw()
     rect(0, height/3, width, height/3);
     fill(#EBA937);
     rect(0, 2 * height/3, width, height/3);
+  }
+
+  // for the magnetic field simulation, off otherwise
+  if (bFieldSimOn)
+  {
+    for (int i = 0; i < orbs.length; i++)
+    {
+      if (orbs[i] == null)
+      {
+        orbs[i] = new Orb();
+        break;
+      }
+    }
   }
 
   // println(ELECTRIC_FIELD_ANGLE);
@@ -451,6 +515,14 @@ void keyPressed()
   if (key == '5')
   {
     springSimInit();
+  }
+  if (key == '6')
+  {
+    eFieldSimInit();
+  }
+  if (key == '7')
+  {
+    bFieldSimInit();
   }
 
   if (key == '-' && orbCount > 0) {
