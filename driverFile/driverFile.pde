@@ -1,3 +1,4 @@
+/** SIMULATION BOOLEANS **/
 boolean ordered = false;
 boolean layeredDrag = false;
 boolean bFieldSimOn = false;
@@ -10,31 +11,31 @@ float MAX_MASS = 100;
 float G_CONSTANT = 0.1;
 float K_CONSTANT = 5 * pow(10, 6);
 
-float D_COEF = 0.1; // uniform drag coefficient, this is NOT the value used in the drag simulation.
+float D_COEF = 0.1; // default drag coefficient, overriden in drag simulation
 
-// ACTUAL DRAG COEFFICIENT VALUES
+/** DRAG SIMULATION COEFFICIENT VALUES **/
 float dragAir = 0.3;
 float dragWater = 0.4;
-float dragHoney = 0.6; // Technically, drag isn't supposed to be applied to honey because of its viscosity, but oh well I'm not researching another equation for this.
-// Instead, I just used a higher drag for honey to simulate viscosity instead.
+float dragHoney = 0.6; // honey viscosity is simulated through a higher drag force
 
-// FLUID DENSITY VALUES
+/** FLUID DENSITY VALUES **/
 float airDensity = 0.001;
 float waterDensity = 0.005;
 float honeyDensity = 0.01;
 
+/** SPRING VALUES **/
 int SPRING_LENGTH = 120;
 float  SPRING_K = 0.01;
 
-float ELECTRIC_FIELD_MAGNITUDE = 1000; // Units are N/C or V/m
-float ELECTRIC_FIELD_ANGLE = -PI/2; // very importantly in RADIANS, not degrees.
-//  Also, processing coordinate system is flipped cross the x-axis, keep this in mind when orbs dont move in the intended direction.
+float ELECTRIC_FIELD_MAGNITUDE = 1000; // units are N/C or V/m
+float ELECTRIC_FIELD_ANGLE = -PI/2; // radians
+//  REMINDER: If orbs don't move in the intended direction, Processing's y-coordinate system starts from 0 and increases as you move down
 PVector ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
 
 
 float MAGNETIC_FIELD = 1500; // SI units are teslas (N/Am)
 
-
+/** SIMULATION TRIGGERS **/
 int MOVING = 0;
 int BOUNCE = 1;
 int GRAVITY = 2;
@@ -57,11 +58,12 @@ void setup()
   standardInit();
 }
 
-// The following are the initialization functions for each simulation.
+/** SIMULATION INITIALIZATION **/
+// Resets all currently active toggles and sets active the correct toggles that correspond to the current
+
+// Normal simulation - not meant to demonstrate anything in particular
 void standardInit()
 {
-  // Essentially the basic initialization, not meant to demonstrate anything in particular.
-
   ordered = false;
   layeredDrag = false;
 
@@ -75,9 +77,10 @@ void standardInit()
   earth = new FixedOrb(width / 2, height * 1000, 5, 200000);
 }
 
+
+// Gravity simulation - designed to demonstrate the three-body problem in physics (calculating motion of three bodies that are pulling on each other at the same time)
 void gravitySimInit()
 {
-  // Gravity simulation initialization. Designed to demonstrate the classic three body problem.
   ordered = false;
   layeredDrag = false;
 
@@ -98,10 +101,10 @@ void gravitySimInit()
   }
 }
 
+
+// Electrostatic simulation - designed to demonstrate Coulomb's law and the interaction between positive (+), negative (-), and neutral (.) charges
 void electroStatSimInit()
 {
-  // Electrostatic force demonstration. Designed to demonstrate Coulomb's law, interaction between +, -, and neutral charges.
-
   ordered = true;
   layeredDrag = false;
 
@@ -129,10 +132,10 @@ void electroStatSimInit()
   orbs[4].bsize = 25;
 }
 
+
+// Drag simulation - simulates drag force through air, water, and honey
 void dragSimInit()
 {
-  // Drag force simulation. Three different layers: air, water, honey.
-
   ordered = false;
   layeredDrag = true;
 
@@ -170,6 +173,8 @@ void dragSimInit()
   orbs[2].mass = 50;
 }
 
+
+// Spring simulation - based off of spring lab
 void springSimInit()
 {
   ordered = false;
@@ -200,6 +205,8 @@ void springSimInit()
   orbs[1].bsize = 25;
 }
 
+
+// Electric field simulation - illustrates a parallel plate capacitor's charges
 void eFieldSimInit()
 {
   ordered = true;
@@ -229,6 +236,8 @@ void eFieldSimInit()
   orbs[4].bsize = 25;
 }
 
+
+// Magnetic field simulation
 void bFieldSimInit()
 {
   ordered = false;
@@ -248,13 +257,13 @@ void bFieldSimInit()
   bFieldSimOn = true;
 }
 
-void draw()
+void draw() // applies forces depending on currently active toggles and simulation
 {
   background(255);
   displayMode();
 
 
-  // for the drag simulation, off otherwise
+  // Drag simulation boolean check
   if (layeredDrag)
   {
     fill(#04ADE2);
@@ -263,7 +272,7 @@ void draw()
     rect(0, 2 * height/3, width, height/3);
   }
 
-  // for the magnetic field simulation, off otherwise
+  // Magnetic field simulation boolean check
   if (bFieldSimOn)
   {
     for (int i = 0; i < orbs.length; i++)
@@ -278,7 +287,7 @@ void draw()
 
   // println(ELECTRIC_FIELD_ANGLE);
 
-  //draw the orbs and springs
+  // draw the orbs and springs
   for (int o=0; o < orbCount; o++) {
     orbs[o].display();
   }
@@ -530,7 +539,6 @@ void keyPressed()
     orbCount--;
   }//removal
   if (key == '=' || key == '+') {
-    //Part 4: Write addOrb() below
     addOrb();
   }//addition
 }//keyPressed
