@@ -24,7 +24,7 @@ class Orb
     bsize = random(10, MAX_SIZE);
     float x = random(bsize/2, width-bsize/2);
     float y = random(bsize/2, height-bsize/2);
-    charge = random(-0.01, 0.01);
+    charge = random(-0.1, 0.1);
     center = new PVector(x, y);
     mass = random(10, 100);
     // mass = 5 * bsize;
@@ -55,7 +55,7 @@ class Orb
    */
   void move(boolean bounce)
   {
-    drawTrace(50);
+    drawTrace(20);
     if (bounce) {
       xBounce();
       yBounce();
