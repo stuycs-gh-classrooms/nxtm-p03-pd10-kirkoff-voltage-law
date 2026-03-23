@@ -1,6 +1,5 @@
 class Orb
 {
-
   // instance variables
   PVector center;
   PVector velocity;
@@ -16,8 +15,8 @@ class Orb
 
 
   /**
-   This constructor constructs an object of class Orb at a random position with a random size and mass.
-   This is used if you do not want to be deliberate in the parameters of the object.
+   Constructs an object of class Orb at a random position with a random size and mass.
+   Sets default parameters of the object.
    */
   Orb()
   {
@@ -35,8 +34,8 @@ class Orb
 
 
   /**
-   This constructor constructs an object of class Orb at a given position with a given size and mass.
-   This is used if you want to be deliberate in the parameters of the object.
+   Constructs an object of class Orb at a given position with a given size and mass.
+   Used for setting explicit parameters of the object.
    */
   Orb(float x, float y, float s, float m, float q)
   {
@@ -50,10 +49,7 @@ class Orb
   }
 
 
-  /**
-   This method is used to change the position of the object. It calculates bounces, applies accelerations and velocities, and resets acceleration after every frame.
-   */
-  void move(boolean bounce)
+  void move(boolean bounce) // Changes the Orb's position and calculates bounces, applies acceleration and velocity, and resets acceleration after every frame to prevent infinite acceleration
   {
     drawTrace(20);
     if (bounce) {
@@ -75,7 +71,7 @@ class Orb
     }
   }//move
 
-  void drawTrace(int traceLength)
+  void drawTrace(int traceLength) // Create a temporary trail that follows the Orb, begins deleting the first point upon reaching the max number of "traced" points
   {
     PVector newCircle = new PVector(center.x, center.y);
     trace.add(newCircle);
@@ -102,10 +98,7 @@ class Orb
   }
 
 
-  /**
-   This method is used to apply a given force to the object using the relationship F=ma, applying a given acceleration depending on the force and mass.
-   */
-  void applyForce(PVector force)
+  void applyForce(PVector force) // Applies a given force to the Orb using F=ma formula and applies acceleration depending on the force and mass of the Orb.
   {
     PVector scaleForce = force.copy();
     scaleForce.div(mass);
@@ -113,12 +106,9 @@ class Orb
   }
 
 
-  /**
-   This method calculates a theoretical drag force being applied on an object at a given time with a given drag coefficient and velocity.
-   */
-  PVector getDragForce(float fluidDensity, float cd)
+  PVector getDragForce(float fluidDensity, float cd) // Calculates a theoretical drag force being applied on an object using a drag coefficient and velocity as parameters. Returns a PVector force
   {
-    float area = PI * (bsize/2) * (bsize/2); // This is the cross-sectional area
+    float area = PI * (bsize/2) * (bsize/2); // Cross-sectional area
 
     float dragMag = -0.5 * velocity.mag() * velocity.mag() * cd * fluidDensity * area;
 
@@ -138,15 +128,11 @@ class Orb
   }
 
 
-  /**
-   This method calculates the force of gravity between the object and another object of class Orb with the other orb and the gravitational coefficient
-   being provided as parameters, returning a PVector that represents a force.
-   */
-  PVector getGravity(Orb other, float G)
+  PVector getGravity(Orb other, float G) // Calculates the force of gravity between two Orbs using a gravitational coefficient as a parameter. Returns a PVector force
   {
     float strength = G * mass*other.mass;
 
-    //dont want to divide by 0!
+    // Avoid division by 0
     float r = max(center.dist(other.center), MIN_SIZE);
 
     strength = strength/ pow(r, 2);
@@ -156,13 +142,15 @@ class Orb
     return force;
   }
 
-  PVector getElectroStat(Orb other, float k)
+  PVector getElectroStat(Orb other, float k) // Calculates the electrostatic force between two Orbs using the k constant as a parameter. Returns a PVector force
   {
 
-    //This subtraction appears reversed such that you can get the correct directions for the vectors.
-    // You can check it yourself: In this scenario, the force vector starts out pointing away from the other orb.
-    // This means that with two positive or two negative charges, the sign remains unchanged and you get repulsion (this lines up with reality)
-    // With a + and a -, the sign is flipped and you get attraction.
+    /*
+     This subtraction appears reversed such that you can get the correct directions for the vectors.
+     You can check it yourself: In this scenario, the force vector starts out pointing away from the other orb.
+     This means that with two positive or two negative charges, the sign remains unchanged and you get repulsion (this lines up with reality)
+     With a + and a -, the sign is flipped and you get attraction.
+     */
     PVector force = center.copy();
 
     force.sub(other.center);
@@ -178,14 +166,14 @@ class Orb
     return force;
   }
 
-  PVector getElectricFieldForce(PVector field)
+  PVector getElectricFieldForce(PVector field) // Calculates the force applied on an Orb by an electric field using an electric field coefficient as a parameter. Returns a PVector force
   {
     PVector force = (field.copy()).mult(charge);
 
     return force;
   }
 
-  PVector getMagneticFieldForce(float b)
+  PVector getMagneticFieldForce(float b) // Calculates the force applied on an Orb by a magnetic field using a magnetic field coefficient as a parameter. Returns a PVector force
   {
     PVector force = new PVector(-charge * velocity.y * b, charge * velocity.x * b);
 
@@ -196,7 +184,7 @@ class Orb
   {
     // NOTE: Assumes elastic collisions. Inelastic collision calculations are WEIRD.
 
-    // The following section finds the nearest Orb. Self-explanatory code.
+    // Finds the nearest Orb
     Orb nearestOrb = new Orb(Float.MAX_VALUE, Float.MAX_VALUE, 0, 0, 0);
 
     for (int i = 0; i < orbs.length; i++)
@@ -207,8 +195,8 @@ class Orb
       }
     }
 
-    // The following section will be a check for overlap and then a subsequent correction of that overlap.
 
+    // Checks for overlapping of two Orbs and corrects if needed
     if (collisionCheck(nearestOrb))
     {
       float overlap = bsize/2 + nearestOrb.bsize/2 - center.dist(nearestOrb.center);
@@ -226,8 +214,8 @@ class Orb
       }
     }
 
-    // The following section will be a check for collision and then subsequently an application of the collision formula.
 
+    // Checks for collisions and applies the collision formula depending on the result
     float velAngle = atan2(velocity.y, velocity.x); // for some dumbass reason the y-cors and x-cors in atan2 are flipped.
     float velAngleOther = atan2(nearestOrb.velocity.y, nearestOrb.velocity.x);
     float contactAngle = atan2(nearestOrb.center.y - center.y, nearestOrb.center.x - center.x);
@@ -284,11 +272,7 @@ class Orb
   }//getSpring
 
 
-  /**
-   This method checks whether or not the object overlaps with the top and bottom boundaries of the plane, and returns a boolean accordingly.
-   This is used to calculate bounces in the vertical direction.
-   */
-  boolean yBounce()
+  boolean yBounce() // Checks if the Orb has touched or somehow gone past the top and bottom boundaries of the window. Returns a boolean
   {
     if (center.y > height - bsize/2) {
       velocity.y *= -1;
@@ -305,11 +289,7 @@ class Orb
   }//yBounce
 
 
-  /**
-   This method checks whether or not the object overlaps with the left and right boundaries of the plane, and returns a boolean accordingly.
-   This is used to calculate bounces in the horizontal direction.
-   */
-  boolean xBounce()
+  boolean xBounce() // Checks if the Orb has touched or somehow gone past the left and right boundaries of the window. Returns a boolean
   {
     if (center.x > width - bsize/2) {
       center.x = width - bsize/2;
@@ -324,31 +304,22 @@ class Orb
   }//xbounce
 
 
-  /**
-   This method checks whether or not the object overlaps with another orb and returns a boolean accordingly.
-   */
-  boolean collisionCheck(Orb other)
+  boolean collisionCheck(Orb other) // Checks if two Orbs overlap. Returns a boolean
   {
     return ( this.center.dist(other.center)
       <= (this.bsize/2 + other.bsize/2) );
   }//collisionCheck
 
 
-  /**
-   This method changes the color of the object.
-   */
-  void setColor()
+  void setColor() // Changes the color of an Orb
   {
     color c0 = color(0, 255, 255);
     color c1 = color(0);
-    /*
-    lerpColor calculates a color between the two specified colors, whose "closeness" to each color inputted is determined by the third parameter.
-     */
-    c = lerpColor(c0, c1, (mass-MIN_SIZE)/(MAX_MASS-MIN_SIZE));
+    c = lerpColor(c0, c1, (mass-MIN_SIZE)/(MAX_MASS-MIN_SIZE)); // Calculates a color between the two specified colors, whose "closeness" to each color is determined by the third parameter.
   }//setColor
 
 
-  //visual behavior
+  // visual behavior
   void display()
   {
     noStroke();

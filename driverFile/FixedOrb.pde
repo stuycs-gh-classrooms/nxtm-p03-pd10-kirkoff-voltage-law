@@ -1,6 +1,5 @@
 class FixedOrb extends Orb
 {
-
   /**
    Constructs an object of class FixedOrb at a given position with a given size and mass.
    Used for setting explicit parameters of the object.
