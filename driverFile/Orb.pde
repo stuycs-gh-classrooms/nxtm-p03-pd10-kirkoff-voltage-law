@@ -49,7 +49,11 @@ class Orb
 
   void move(boolean bounce) // Changes the Orb's position and calculates bounces, applies acceleration and velocity, and resets acceleration after every frame to prevent infinite acceleration
   {
-    drawTrace(20);
+    if(traceOn)
+    {
+      drawTrace(20);
+    }
+    
     if (bounce) {
       xBounce();
       yBounce();
