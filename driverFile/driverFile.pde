@@ -1,15 +1,17 @@
 /** SIMULATION BOOLEANS **/
 boolean ordered = false;
 boolean layeredDrag = false;
-boolean bFieldSimOn = false;
 boolean traceOn = true;
+boolean springSimOn = false;
+
+
 int NUM_ORBS = 10;
 int MIN_SIZE = 10;
 int MAX_SIZE = 60;
 float MIN_MASS = 10;
 float MAX_MASS = 100;
 float G_CONSTANT = 0.1;
-float K_CONSTANT = 5 * pow(10, 6);
+float K_CONSTANT = 5 * pow(10, 4);
 
 float D_COEF = 0.1; // default drag coefficient, overriden in drag simulation
 
@@ -72,6 +74,7 @@ void setup()
   println("[m]: magnetic field on/off");
   println("[ ] ]: Electric field angle rotation counterclockwise.");
   println("[ [ ]: Electric field angle rotation clockwise.");
+  println("[T]: Trace on/off");
   println("Simulation Controls:");
   println("[1]: Standard Initialization");
   println("[2]: Gravity Simulation: Three Body Chaos");
@@ -90,6 +93,7 @@ void standardInit()
 {
   ordered = false;
   layeredDrag = false;
+  springSimOn = false;
 
   for (int i = 0; i < toggles.length; i++)
   {
@@ -98,7 +102,7 @@ void standardInit()
 
   NUM_ORBS = 10;
   makeOrbs(ordered);
-  earth = new FixedOrb(width / 2, height * 1000, 5, 200000);
+  // earth = new FixedOrb(width / 2, height * 1000, 5, 200000);
 }
 
 
@@ -107,6 +111,7 @@ void gravitySimInit()
 {
   ordered = false;
   layeredDrag = false;
+  springSimOn = false;
 
   for (int i = 0; i < toggles.length; i++)
   {
@@ -131,6 +136,7 @@ void electroStatSimInit()
 {
   ordered = true;
   layeredDrag = false;
+  springSimOn = false;
 
   for (int i = 0; i < toggles.length; i++)
   {
@@ -162,6 +168,7 @@ void dragSimInit()
 {
   ordered = false;
   layeredDrag = true;
+  springSimOn = false;
 
   for (int i = 0; i < toggles.length; i++)
   {
@@ -203,6 +210,7 @@ void springSimInit()
 {
   ordered = false;
   layeredDrag = false;
+  springSimOn = true;
 
   for (int i = 0; i < toggles.length; i++)
   {
@@ -237,6 +245,7 @@ void eFieldSimInit()
 {
   ordered = true;
   layeredDrag = false;
+  springSimOn = false;
 
   for (int i = 0; i < toggles.length; i++)
   {
@@ -268,6 +277,7 @@ void bFieldSimInit()
 {
   ordered = false;
   layeredDrag = false;
+  springSimOn = false;
 
   for (int i = 0; i < toggles.length; i++)
   {
@@ -304,6 +314,7 @@ void combSimInit()
 {
   ordered = false;
   layeredDrag = true;
+  springSimOn = false;
   earth = null;
 
   for (int i = 0; i < toggles.length; i++)
@@ -332,6 +343,19 @@ void draw() // applies forces depending on currently active toggles and simulati
   }
 
   // println(ELECTRIC_FIELD_ANGLE);
+
+  // draw the traces
+  for (int o=0; o < orbCount; o++) {
+    orbs[o].drawTrace(50);
+    if (traceOn && springSimOn == false)
+    {
+      orbs[o].traceDisplay();
+    }
+  }
+  if (traceOn && springSimOn == true)
+    {
+      orbs[2].traceDisplay();
+    }
 
   // draw the orbs and springs
   for (int o=0; o < orbCount; o++) {

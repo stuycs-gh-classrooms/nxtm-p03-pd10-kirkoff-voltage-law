@@ -49,10 +49,6 @@ class Orb
 
   void move(boolean bounce) // Changes the Orb's position and calculates bounces, applies acceleration and velocity, and resets acceleration after every frame to prevent infinite acceleration
   {
-    if (traceOn)
-    {
-      drawTrace(20);
-    }
 
     if (bounce) {
       xBounce();
@@ -75,13 +71,7 @@ class Orb
   {
     PVector newCircle = new PVector(center.x, center.y);
     trace.add(newCircle);
-
-    for (int i = 0; i < trace.size(); i++)
-    {
-      stroke(0);
-      fill(0);
-      circle(trace.get(i).x, trace.get(i).y, 3);
-    }
+    
     if (trace.size() > traceLength)
     {
       for (int i = 0; i < trace.size() - 1; i++)
@@ -94,6 +84,16 @@ class Orb
           trace.set(i+1, null);
         }
       }
+    }
+  }
+  
+  void traceDisplay()
+  {
+    for (int i = 0; i < trace.size(); i++)
+    {
+      stroke(0);
+      fill(0);
+      circle(trace.get(i).x, trace.get(i).y, 3);
     }
   }
 
