@@ -71,11 +71,11 @@ class Orb
   {
     PVector newCircle = new PVector(center.x, center.y);
     trace.add(newCircle);
-    fill(0);
-
 
     for (int i = 0; i < trace.size(); i++)
     {
+      stroke(0);
+      fill(0);
       circle(trace.get(i).x, trace.get(i).y, 3);
     }
     if (trace.size() > traceLength)

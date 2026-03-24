@@ -211,7 +211,7 @@ void springSimInit()
   toggles[SPRING] = true;
   toggles[GRAVITY] = true;
 
-  NUM_ORBS = 2;
+  NUM_ORBS = 3;
   makeOrbs(ordered);
   earth = new FixedOrb(width / 2, height * 1000, 5, 200000);
 
