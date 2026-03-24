@@ -212,6 +212,7 @@ void springSimInit()
   toggles[GRAVITY] = true;
 
   NUM_ORBS = 3;
+  orbCount = NUM_ORBS;
   makeOrbs(ordered);
   earth = new FixedOrb(width / 2, height * 1000, 5, 200000);
 
@@ -219,6 +220,7 @@ void springSimInit()
 
   orbs[0] = new FixedOrb(width/2, height / 2, 0.00001, 0);
   orbs[1] = new Orb();
+  orbs[2] = new Orb();
 
   while (orbs[1].center.x > width/4 && orbs[1].center.x < 3 * width/4)
   {
