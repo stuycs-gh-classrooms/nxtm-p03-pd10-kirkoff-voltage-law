@@ -33,7 +33,7 @@ float ELECTRIC_FIELD_ANGLE = -PI/2; // radians
 PVector ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
 
 
-float MAGNETIC_FIELD = 1500; // SI units are teslas (N/Am)
+float MAGNETIC_FIELD = 20; // SI units are teslas (N/Am)
 
 /** SIMULATION TRIGGERS **/
 int MOVING = 0;
@@ -56,6 +56,30 @@ void setup()
   frameRate(120);
   size(1000, 1000);
   standardInit();
+  
+  println("Sup mfers! and mr mykolyk ig");
+  println("Anyways, here's a list of controls. Any clarification you need will be found in the comments");
+  println("If you need further clarification, read the damn code.");
+  println("If something doesn't quite work right, adjust the global variables.");
+  println("Forcec Controls:");
+  println("[ ]: Start/stop");
+  println("[g]: gravity on/off");
+  println("[b]: bounce on/off");
+  println("[d]: drag on/off");
+  println("[e]: electrostatic force on/off");
+  println("[s]: springs on/off");
+  println("[f]: electric field on/off");
+  println("[m]: magnetic field on/off");
+  println("[ ] ]: Electric field angle rotation counterclockwise.");
+  println("[ [ ]: Electric field angle rotation clockwise.");
+  println("Simulation Controls:");
+  println("[1]: Standard Initialization");
+  println("[2]: Gravity Simulation: Three Body Chaos");
+  println("[3]: Electrostatic Force Simulation: Coulomb's Law");
+  println("[4]: Drag Force Simulation: Air, Water, and Honey (Sorta)");
+  println("[5]: Spring Force Simulation: Harmonic Motion (and a little bit of pendulums too)");
+  println("[6]: Electric Field Simulation: Quicker than Merge Sort?");
+  println("[7]: Magnetic Field Simulation: Look at those patternsqw3uhbkwfiouhyaewoiuhvqefgiuvwrd");
 }
 
 /** SIMULATION INITIALIZATION **/
@@ -251,10 +275,29 @@ void bFieldSimInit()
   toggles[BOUNCE] = true;
 
   earth = null;
-  NUM_ORBS = 1;
+  NUM_ORBS = 3;
   makeOrbs(ordered);
+  
+  orbs[0].bsize = 25;
+  orbs[1].bsize = 25;
+  orbs[2].bsize = 25;
+  
+  orbs[0].center = new PVector(orbs[0].bsize/2, height/6);
+  orbs[1].center = new PVector(orbs[1].bsize/2, height/2);
+  orbs[2].center = new PVector(orbs[2].bsize/2, 5 * height/6);
+  
+  orbs[0].velocity = new PVector(10, 0);
+  orbs[1].velocity = new PVector(10, 0);
+  orbs[2].velocity = new PVector(10, 0);
+  
+  orbs[0].charge = -0.01;
+  orbs[1].charge = 0;
+  orbs[2].charge = 0.01;
+  
+  orbs[0].mass = 50;
+  orbs[1].mass = 50;
+  orbs[2].mass = 50;
 
-  bFieldSimOn = true;
 }
 
 void draw() // applies forces depending on currently active toggles and simulation
@@ -270,19 +313,6 @@ void draw() // applies forces depending on currently active toggles and simulati
     rect(0, height/3, width, height/3);
     fill(#EBA937);
     rect(0, 2 * height/3, width, height/3);
-  }
-
-  // Magnetic field simulation boolean check
-  if (bFieldSimOn)
-  {
-    for (int i = 0; i < orbs.length; i++)
-    {
-      if (orbs[i] == null)
-      {
-        orbs[i] = new Orb();
-        break;
-      }
-    }
   }
 
   // println(ELECTRIC_FIELD_ANGLE);
@@ -499,11 +529,13 @@ void keyPressed()
   }
   if (key == ']')
   {
-    ELECTRIC_FIELD_ANGLE -= 0.01;
+    ELECTRIC_FIELD_ANGLE -= 0.1;
+    ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
   }
   if (key == '[')
   {
-    ELECTRIC_FIELD_ANGLE += 0.01;
+    ELECTRIC_FIELD_ANGLE += 0.1;
+    ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
   }
   if (key == '1')
   {

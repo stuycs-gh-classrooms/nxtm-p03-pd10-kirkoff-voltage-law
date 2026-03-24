@@ -11,8 +11,6 @@ class Orb
 
   ArrayList<PVector> trace = new ArrayList(50);
 
-  float currentFluidDensity;
-
 
   /**
    Constructs an object of class Orb at a random position with a random size and mass.
@@ -59,8 +57,6 @@ class Orb
 
     velocity.add(acceleration);
     center.add(velocity);
-
-    collide();
 
     acceleration.mult(0);
 
