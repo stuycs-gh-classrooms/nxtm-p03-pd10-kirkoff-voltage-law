@@ -300,7 +300,22 @@ void bFieldSimInit()
   orbs[1].mass = 50;
   orbs[2].mass = 50;
 }
+void combSimInit()
+{
+  ordered = false;
+  layeredDrag = true;
+  earth = null;
 
+  for (int i = 0; i < toggles.length; i++)
+  {
+    toggles[i] = true;
+  }
+  NUM_ORBS = 10;
+  for(int i = 0; i < 10; i++)
+  {
+    orbs[i] = new Orb();
+  }
+}
 void draw() // applies forces depending on currently active toggles and simulation
 {
   background(255);
@@ -572,6 +587,10 @@ void keyPressed()
   if (key == '7')
   {
     bFieldSimInit();
+  }
+    if (key == '8')
+  {
+    combSimInit();
   }
 
   if (key == '-' && orbCount > 0) {
