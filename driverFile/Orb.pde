@@ -176,64 +176,53 @@ class Orb
     return force;
   }
 
-  void collide()
+  void collide(Orb other)
   {
     // NOTE: Assumes elastic collisions. Inelastic collision calculations are WEIRD.
 
-    // Finds the nearest Orb
-    Orb nearestOrb = new Orb(Float.MAX_VALUE, Float.MAX_VALUE, 0, 0, 0);
-
-    for (int i = 0; i < orbs.length; i++)
-    {
-      if (orbs[i] != null && center.dist(orbs[i].center) < center.dist(nearestOrb.center) && orbs[i] != this)
-      {
-        nearestOrb = orbs[i];
-      }
-    }
-
-
     // Checks for overlapping of two Orbs and corrects if needed
-    if (collisionCheck(nearestOrb))
-    {
-      float overlap = bsize/2 + nearestOrb.bsize/2 - center.dist(nearestOrb.center);
-
-      if (overlap > 0)
+      if (other != null && other != this && collisionCheck(other))
       {
-        PVector direction = new PVector(-(nearestOrb.center.x - center.x), -(nearestOrb.center.y - center.y));
-        direction.normalize();
+        float overlap = bsize/2 + other.bsize/2 - center.dist(other.center);
 
-        direction.mult(overlap/2);
+        if (overlap > 0)
+        {
+          PVector direction = new PVector(-(other.center.x - center.x), -(other.center.y - center.y));
+          direction.normalize();
 
-        center.add(direction);
+          direction.mult(overlap/2);
 
-        nearestOrb.center.sub(direction);
+          center.add(direction);
+
+          other.center.sub(direction);
+        }
       }
-    }
 
 
     // Checks for collisions and applies the collision formula depending on the result
-    float velAngle = atan2(velocity.y, velocity.x); // for some dumbass reason the y-cors and x-cors in atan2 are flipped.
-    float velAngleOther = atan2(nearestOrb.velocity.y, nearestOrb.velocity.x);
-    float contactAngle = atan2(nearestOrb.center.y - center.y, nearestOrb.center.x - center.x);
 
-    float velocityX;
-    float velocityY;
+      if (other != null && other != this && collisionCheck(other))
+      {
+        float velAngle = atan2(velocity.y, velocity.x); // for some dumbass reason the y-cors and x-cors in atan2 are flipped.
+        float velAngleOther = atan2(other.velocity.y, other.velocity.x);
+        float contactAngle = atan2(other.center.y - center.y, other.center.x - center.x);
 
-    float otherVelX;
-    float otherVelY;
+        float velocityX;
+        float velocityY;
 
-    if (collisionCheck(nearestOrb))
-    {
-      velocityX = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - nearestOrb.mass)) + (2 * nearestOrb.mass * nearestOrb.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + nearestOrb.mass)) * cos(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * cos(contactAngle + PI/2);
-      velocityY = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - nearestOrb.mass)) + (2 * nearestOrb.mass * nearestOrb.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + nearestOrb.mass)) * sin(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * sin(contactAngle + PI/2);
+        float otherVelX;
+        float otherVelY;
 
-      otherVelX = (((nearestOrb.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (nearestOrb.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + nearestOrb.mass)) * cos(contactAngle + PI) + nearestOrb.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * cos(contactAngle + (3 * PI/2));
-      otherVelY = (((nearestOrb.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (nearestOrb.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + nearestOrb.mass)) * sin(contactAngle + PI) + nearestOrb.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * sin(contactAngle + (3 * PI/2));
+        velocityX = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - other.mass)) + (2 * other.mass * other.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + other.mass)) * cos(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * cos(contactAngle + PI/2);
+        velocityY = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - other.mass)) + (2 * other.mass * other.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + other.mass)) * sin(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * sin(contactAngle + PI/2);
+
+        otherVelX = (((other.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (other.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + other.mass)) * cos(contactAngle + PI) + other.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * cos(contactAngle + (3 * PI/2));
+        otherVelY = (((other.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (other.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + other.mass)) * sin(contactAngle + PI) + other.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * sin(contactAngle + (3 * PI/2));
 
 
-      nearestOrb.velocity = new PVector(otherVelX, otherVelY);
-      velocity = new PVector(velocityX, velocityY);
-    }
+        other.velocity = new PVector(otherVelX, otherVelY);
+        velocity = new PVector(velocityX, velocityY);
+      }
   }
 
   /**

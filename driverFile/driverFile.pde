@@ -56,7 +56,7 @@ void setup()
   frameRate(120);
   size(1000, 1000);
   standardInit();
-  
+
   println("Sup mfers! and mr mykolyk ig");
   println("Anyways, here's a list of controls. Any clarification you need will be found in the comments");
   println("If you need further clarification, read the damn code.");
@@ -277,27 +277,26 @@ void bFieldSimInit()
   earth = null;
   NUM_ORBS = 3;
   makeOrbs(ordered);
-  
+
   orbs[0].bsize = 25;
-  orbs[1].bsize = 25;
+  orbs[1].bsize = 5;
   orbs[2].bsize = 25;
-  
+
   orbs[0].center = new PVector(orbs[0].bsize/2, height/6);
   orbs[1].center = new PVector(orbs[1].bsize/2, height/2);
   orbs[2].center = new PVector(orbs[2].bsize/2, 5 * height/6);
-  
+
   orbs[0].velocity = new PVector(10, 0);
   orbs[1].velocity = new PVector(10, 0);
   orbs[2].velocity = new PVector(10, 0);
-  
+
   orbs[0].charge = -0.01;
   orbs[1].charge = 0;
   orbs[2].charge = 0.01;
-  
+
   orbs[0].mass = 50;
   orbs[1].mass = 50;
   orbs[2].mass = 50;
-
 }
 
 void draw() // applies forces depending on currently active toggles and simulation
@@ -392,6 +391,13 @@ void draw() // applies forces depending on currently active toggles and simulati
 
     for (int o=0; o < orbCount; o++) {
       orbs[o].move(toggles[BOUNCE]);
+    }
+    for (int i = 0; i < orbCount; i++)
+    {
+      for (int j = 1; j < orbCount; j++)
+      {
+        orbs[i].collide(orbs[j]);
+      }
     }
   }//moving
 }//draw
