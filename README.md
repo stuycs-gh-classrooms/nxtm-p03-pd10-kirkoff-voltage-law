@@ -91,8 +91,7 @@ Using the formula $\frac{Gm_1m_2}{r^2}$ to represent gravity and with a sufficie
 ### Simulation 2: Spring
 Describe what your spring simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-A simple fixed orb at the top of the screen (0 mass) with an orb hanging from it through a "spring". The position of the lower orb can be adjusted before the simulation starts to
-change the initial force applied. You will get simple harmonic motion that decays over time due to the constant force of gravity.
+A simple fixed orb at the center of the screen (0 mass) with an orb hanging from it through a "spring" with another orb hanging from that orb with a "spring". You will get chaos with a double pendulum.
 
 --- 
 
@@ -103,14 +102,34 @@ There will be three sections, air, water, and honey. The air will have little to
 
 --- 
 
-### Simulation 4: Custom force
+### Simulation 4: Electrostatic force
 Describe what your Custom force simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-Three point charges around the center of the screen arranged in a triangle.
+Arranges multiple charged and neutral orbs in a line. The negatively charged Orbs will be attracted to the positively charged Orbs, and Orbs with the same charge will be repelled from each other. Neutral Orbs will not be affected.
 
 --- 
 
-### Simulation 5: Combination
+
+--- 
+
+### Simulation 5: Electric field force
+Describe what your electric field simulation will look like. Explain how it will be setup, and how it should behave while running.
+
+Have an electric field pointing vertically. Positive orbs will be attracted towards the top of the window, negative orbs will be attracted towards the bottom of the window.
+
+--- 
+
+
+--- 
+
+### Simulation 6: Magnetic field force
+Describe what your magnetic field simulation will look like. Explain how it will be setup, and how it should behave while running.
+
+Place three orbs arranged at the left side of the screen with a base velocity that is pointing to the right of the window. The uppermost Orb is negatively charged, the middle Orb is neutral, and the bottommost Orb is positively charged. The uppermost Orb will initially curve up, the neutral Orb will not curve at all, and the bottommost Orb will initially curve down.
+
+--- 
+
+### Simulation 7: Combination
 Describe what your combination simulation will look like. Explain how it will be setup, and how it should behave while running.
 
 Randomly arranged balls across the screen with the two halves of the screen separated for the drag force. In addition, collisions!
