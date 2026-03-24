@@ -2,7 +2,7 @@
 boolean ordered = false;
 boolean layeredDrag = false;
 boolean bFieldSimOn = false;
-
+boolean traceOn = true;
 int NUM_ORBS = 10;
 int MIN_SIZE = 10;
 int MAX_SIZE = 60;
@@ -591,6 +591,10 @@ void keyPressed()
     if (key == '8')
   {
     combSimInit();
+  } 
+  if(key == 't')
+  {
+    traceOn = !traceOn;
   }
 
   if (key == '-' && orbCount > 0) {
