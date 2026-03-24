@@ -49,11 +49,11 @@ class Orb
 
   void move(boolean bounce) // Changes the Orb's position and calculates bounces, applies acceleration and velocity, and resets acceleration after every frame to prevent infinite acceleration
   {
-    if(traceOn)
+    if (traceOn)
     {
       drawTrace(20);
     }
-    
+
     if (bounce) {
       xBounce();
       yBounce();
@@ -185,48 +185,48 @@ class Orb
     // NOTE: Assumes elastic collisions. Inelastic collision calculations are WEIRD.
 
     // Checks for overlapping of two Orbs and corrects if needed
-      if (other != null && other != this && collisionCheck(other))
+    if (other != null && other != this && collisionCheck(other))
+    {
+      float overlap = bsize/2 + other.bsize/2 - center.dist(other.center);
+
+      if (overlap > 0)
       {
-        float overlap = bsize/2 + other.bsize/2 - center.dist(other.center);
+        PVector direction = new PVector(-(other.center.x - center.x), -(other.center.y - center.y));
+        direction.normalize();
 
-        if (overlap > 0)
-        {
-          PVector direction = new PVector(-(other.center.x - center.x), -(other.center.y - center.y));
-          direction.normalize();
+        direction.mult(overlap/2);
 
-          direction.mult(overlap/2);
+        center.add(direction);
 
-          center.add(direction);
-
-          other.center.sub(direction);
-        }
+        other.center.sub(direction);
       }
+    }
 
 
     // Checks for collisions and applies the collision formula depending on the result
 
-      if (other != null && other != this && collisionCheck(other))
-      {
-        float velAngle = atan2(velocity.y, velocity.x); // for some dumbass reason the y-cors and x-cors in atan2 are flipped.
-        float velAngleOther = atan2(other.velocity.y, other.velocity.x);
-        float contactAngle = atan2(other.center.y - center.y, other.center.x - center.x);
+    if (other != null && other != this && collisionCheck(other))
+    {
+      float velAngle = atan2(velocity.y, velocity.x); // for some dumbass reason the y-cors and x-cors in atan2 are flipped.
+      float velAngleOther = atan2(other.velocity.y, other.velocity.x);
+      float contactAngle = atan2(other.center.y - center.y, other.center.x - center.x);
 
-        float velocityX;
-        float velocityY;
+      float velocityX;
+      float velocityY;
 
-        float otherVelX;
-        float otherVelY;
+      float otherVelX;
+      float otherVelY;
 
-        velocityX = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - other.mass)) + (2 * other.mass * other.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + other.mass)) * cos(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * cos(contactAngle + PI/2);
-        velocityY = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - other.mass)) + (2 * other.mass * other.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + other.mass)) * sin(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * sin(contactAngle + PI/2);
+      velocityX = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - other.mass)) + (2 * other.mass * other.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + other.mass)) * cos(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * cos(contactAngle + PI/2);
+      velocityY = (((velocity.mag() * cos(velAngle - contactAngle) * (mass - other.mass)) + (2 * other.mass * other.velocity.mag() * cos(velAngleOther - contactAngle)))/(mass + other.mass)) * sin(contactAngle) + velocity.mag() * sin(velAngle - contactAngle) * sin(contactAngle + PI/2);
 
-        otherVelX = (((other.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (other.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + other.mass)) * cos(contactAngle + PI) + other.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * cos(contactAngle + (3 * PI/2));
-        otherVelY = (((other.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (other.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + other.mass)) * sin(contactAngle + PI) + other.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * sin(contactAngle + (3 * PI/2));
+      otherVelX = (((other.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (other.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + other.mass)) * cos(contactAngle + PI) + other.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * cos(contactAngle + (3 * PI/2));
+      otherVelY = (((other.velocity.mag() * cos(velAngleOther - (contactAngle + PI)) * (other.mass - mass)) + (2 * mass * velocity.mag() * cos(velAngle - (contactAngle + PI))))/(mass + other.mass)) * sin(contactAngle + PI) + other.velocity.mag() * sin(velAngleOther - (contactAngle + PI)) * sin(contactAngle + (3 * PI/2));
 
 
-        other.velocity = new PVector(otherVelX, otherVelY);
-        velocity = new PVector(velocityX, velocityY);
-      }
+      other.velocity = new PVector(otherVelX, otherVelY);
+      velocity = new PVector(velocityX, velocityY);
+    }
   }
 
   /**

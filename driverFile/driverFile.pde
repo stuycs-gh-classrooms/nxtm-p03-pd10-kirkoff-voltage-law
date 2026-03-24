@@ -311,7 +311,7 @@ void combSimInit()
     toggles[i] = true;
   }
   NUM_ORBS = 10;
-  for(int i = 0; i < 10; i++)
+  for (int i = 0; i < 10; i++)
   {
     orbs[i] = new Orb();
   }
@@ -588,11 +588,11 @@ void keyPressed()
   {
     bFieldSimInit();
   }
-    if (key == '8')
+  if (key == '8')
   {
     combSimInit();
-  } 
-  if(key == 't')
+  }
+  if (key == 't')
   {
     traceOn = !traceOn;
   }
