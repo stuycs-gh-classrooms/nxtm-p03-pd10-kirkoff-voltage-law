@@ -11,7 +11,7 @@ int MAX_SIZE = 60;
 float MIN_MASS = 10;
 float MAX_MASS = 100;
 float G_CONSTANT = 0.1;
-float K_CONSTANT = 5 * pow(10, 4);
+float K_CONSTANT = 1 * pow(10, 4);
 
 float D_COEF = 0.1; // default drag coefficient, overriden in drag simulation
 
@@ -29,7 +29,7 @@ float honeyDensity = 0.01;
 int SPRING_LENGTH = 120;
 float  SPRING_K = 0.01;
 
-float ELECTRIC_FIELD_MAGNITUDE = 1000; // units are N/C or V/m
+float ELECTRIC_FIELD_MAGNITUDE = 250; // units are N/C or V/m
 float ELECTRIC_FIELD_ANGLE = -PI/2; // radians
 //  REMINDER: If orbs don't move in the intended direction, Processing's y-coordinate system starts from 0 and increases as you move down
 PVector ELECTRIC_FIELD = new PVector(ELECTRIC_FIELD_MAGNITUDE * cos(ELECTRIC_FIELD_ANGLE), ELECTRIC_FIELD_MAGNITUDE * sin(ELECTRIC_FIELD_ANGLE));
@@ -291,7 +291,7 @@ void bFieldSimInit()
   makeOrbs(ordered);
 
   orbs[0].bsize = 25;
-  orbs[1].bsize = 5;
+  orbs[1].bsize = 1;
   orbs[2].bsize = 25;
 
   orbs[0].center = new PVector(orbs[0].bsize/2, height/6);
@@ -322,6 +322,7 @@ void combSimInit()
     toggles[i] = true;
   }
   NUM_ORBS = 10;
+  makeOrbs(ordered);
   for (int i = 0; i < 10; i++)
   {
     orbs[i] = new Orb();
@@ -435,7 +436,7 @@ void draw() // applies forces depending on currently active toggles and simulati
     }
     for (int i = 0; i < orbCount; i++)
     {
-      for (int j = 1; j < orbCount; j++)
+      for (int j = i + 1; j < orbCount; j++)
       {
         orbs[i].collide(orbs[j]);
       }
