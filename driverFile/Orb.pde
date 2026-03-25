@@ -74,16 +74,7 @@ class Orb
     
     if (trace.size() > traceLength)
     {
-      for (int i = 0; i < trace.size() - 1; i++)
-      {
-        if (trace.get(i+1) != null)
-        {
-          trace.set(i, trace.get(i+1));
-        } else
-        {
-          trace.set(i+1, null);
-        }
-      }
+      trace.remove(0);
     }
   }
   
@@ -316,7 +307,6 @@ class Orb
     circle(center.x, center.y, bsize);
     fill(0);
     //text(mass, center.x, center.y);
-
 
     textAlign(CENTER, CENTER);
     textSize(bsize);

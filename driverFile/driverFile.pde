@@ -298,9 +298,9 @@ void bFieldSimInit()
   orbs[1].center = new PVector(orbs[1].bsize/2, height/2);
   orbs[2].center = new PVector(orbs[2].bsize/2, 5 * height/6);
 
-  orbs[0].velocity = new PVector(10, 0);
-  orbs[1].velocity = new PVector(10, 0);
-  orbs[2].velocity = new PVector(10, 0);
+  orbs[0].velocity = new PVector(15, 5);
+  orbs[1].velocity = new PVector(15, 0);
+  orbs[2].velocity = new PVector(15, -5);
 
   orbs[0].charge = -0.01;
   orbs[1].charge = 0;
@@ -347,7 +347,7 @@ void draw() // applies forces depending on currently active toggles and simulati
 
   // draw the traces
   for (int o=0; o < orbCount; o++) {
-    orbs[o].drawTrace(50);
+    orbs[o].drawTrace(250);
     if (traceOn && springSimOn == false)
     {
       orbs[o].traceDisplay();
